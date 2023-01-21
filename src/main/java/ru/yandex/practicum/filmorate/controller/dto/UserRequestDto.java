@@ -11,6 +11,8 @@ import java.time.LocalDate;
 
 @Data
 public class UserRequestDto {
+    private Integer id;
+
     @NotBlank
     @Email()
     private String email;

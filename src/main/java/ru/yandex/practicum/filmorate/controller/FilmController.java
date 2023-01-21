@@ -10,7 +10,9 @@ import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
@@ -28,9 +30,14 @@ public class FilmController {
        return created;
     }
 
-    @PutMapping("/films/{id}")
-    public Film updateFilm(@PathVariable int id,
-                           @Validated @RequestBody FilmRequestDto filmRequestDto) {
+    @PutMapping("/films")
+    public Film updateFilm(@Validated @RequestBody FilmRequestDto filmRequestDto) {
+        int id;
+        if (Objects.nonNull(filmRequestDto.getId())) {
+            id = filmRequestDto.getId();
+        } else {
+            throw new ValidationException("Has no id in dto");
+        }
         log.debug("Handle endpoint PUT /films/id dto - " + filmRequestDto);
         Film film = filmMapper.toModel(filmRequestDto);
         film.setId(id);

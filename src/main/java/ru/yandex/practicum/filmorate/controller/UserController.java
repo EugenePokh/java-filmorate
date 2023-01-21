@@ -10,7 +10,9 @@ import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
+import javax.validation.ValidationException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
@@ -29,9 +31,14 @@ public class UserController {
         return created;
     }
 
-    @PutMapping("/users/{id}")
-    public User updateUser(@PathVariable int id,
-                           @Validated @RequestBody UserRequestDto userRequestDto) {
+    @PutMapping("/users")
+    public User updateUser(@Validated @RequestBody UserRequestDto userRequestDto) {
+        int id;
+        if (Objects.nonNull(userRequestDto.getId())) {
+            id = userRequestDto.getId();
+        } else {
+            throw new ValidationException("Has no id in dto");
+        }
         log.debug("Handle endpoint PUT /users/id dto - " + userRequestDto);
         User user = userMapper.toModel(userRequestDto);
         user.setId(id);
