@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserServiceInMemory implements UserService {
@@ -17,6 +14,11 @@ public class UserServiceInMemory implements UserService {
 
     private final Map<Integer, User> users = new HashMap<>();
     private static int idCounter = 0;
+
+    @Override
+    public Optional<User> findById(int id) {
+        return Optional.ofNullable(users.get(id));
+    }
 
     @Override
     public User save(User user) {

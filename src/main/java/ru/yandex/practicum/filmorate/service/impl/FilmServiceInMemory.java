@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class FilmServiceInMemory implements FilmService {
@@ -17,6 +14,11 @@ public class FilmServiceInMemory implements FilmService {
 
     private final Map<Integer, Film> films = new HashMap<>();
     private static int idCounter = 0;
+
+    @Override
+    public Optional<Film> findById(int id) {
+        return Optional.ofNullable(films.get(id));
+    }
 
     @Override
     public Film save(Film film) {

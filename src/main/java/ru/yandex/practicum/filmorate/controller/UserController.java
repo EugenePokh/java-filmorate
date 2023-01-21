@@ -36,6 +36,7 @@ public class UserController {
         int id;
         if (Objects.nonNull(userRequestDto.getId())) {
             id = userRequestDto.getId();
+            userService.findById(id).orElseThrow(() -> new ValidationException("Has no id in dto"));
         } else {
             throw new ValidationException("Has no id in dto");
         }

@@ -35,6 +35,7 @@ public class FilmController {
         int id;
         if (Objects.nonNull(filmRequestDto.getId())) {
             id = filmRequestDto.getId();
+            filmService.findById(id).orElseThrow(() -> new ValidationException("Has no id in dto"));
         } else {
             throw new ValidationException("Has no id in dto");
         }
