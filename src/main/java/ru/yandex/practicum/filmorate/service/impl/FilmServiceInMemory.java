@@ -29,7 +29,9 @@ public class FilmServiceInMemory implements FilmService {
     @Override
     public Film update(Film film) {
         log.info("Film updated - " + film);
-        return films.put(film.getId(), film);
+        films.put(film.getId(), film);
+
+        return films.get(film.getId());
     }
 
     @Override

@@ -29,7 +29,9 @@ public class UserServiceInMemory implements UserService {
     @Override
     public User update(User user) {
         log.info("User updated - " + user);
-        return users.put(user.getId(), user);
+        users.put(user.getId(), user);
+
+        return users.get(user.getId());
     }
 
     @Override
