@@ -9,7 +9,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +34,7 @@ class UserRequestDtoTest {
         userRequestDto.setEmail("email@email.ru");
         userRequestDto.setLogin("aa");
         userRequestDto.setName("ab");
-        userRequestDto.setBirthday(new Date(LocalDate.now().toEpochDay()));
+        userRequestDto.setBirthday(LocalDate.now().minusDays(1));
 
         Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(userRequestDto);
 
@@ -48,7 +47,7 @@ class UserRequestDtoTest {
         userRequestDto.setEmail("");
         userRequestDto.setLogin("a a");
         userRequestDto.setName("");
-        userRequestDto.setBirthday(new Date(2030, 01, 01));
+        userRequestDto.setBirthday(LocalDate.of(2030, 01, 01));
         Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(userRequestDto);
 
         assertTrue(violations.size() == 3);

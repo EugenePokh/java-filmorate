@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class FilmRequestDto {
@@ -18,7 +18,7 @@ public class FilmRequestDto {
     @Size(max = 200)
     private String description;
     @SinceDate()
-    private Date releaseDate;
+    private LocalDate releaseDate;
     @Positive()
     @NotNull
     private Integer duration;

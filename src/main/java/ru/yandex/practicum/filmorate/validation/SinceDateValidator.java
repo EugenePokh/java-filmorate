@@ -2,9 +2,9 @@ package ru.yandex.practicum.filmorate.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Date;
+import java.time.LocalDate;
 
-public class SinceDateValidator implements ConstraintValidator<SinceDate, Date> {
+public class SinceDateValidator implements ConstraintValidator<SinceDate, LocalDate> {
 
     private String sinceDate;
 
@@ -15,9 +15,9 @@ public class SinceDateValidator implements ConstraintValidator<SinceDate, Date> 
     }
 
     @Override
-    public boolean isValid(Date s, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(LocalDate s, ConstraintValidatorContext constraintValidatorContext) {
         String[] values = sinceDate.split("-");
-        Date since = new Date(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-        return s.after(since);
+        LocalDate since = LocalDate.of(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+        return s.isAfter(since);
     }
 }
