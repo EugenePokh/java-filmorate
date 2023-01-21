@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 public @interface SinceDate {
     String message() default "Invalid date";
 
-    String sinceDateCheck() default "1985-12-27";
+    String sinceDateCheck() default "1895-12-27";
 
     Class<?>[] groups() default {};
 
