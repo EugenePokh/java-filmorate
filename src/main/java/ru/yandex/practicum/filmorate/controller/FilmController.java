@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.controller.dto.FilmRequestDto;
+import ru.yandex.practicum.filmorate.exception.NoSuchFilmException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -35,7 +36,7 @@ public class FilmController {
         int id;
         if (Objects.nonNull(filmRequestDto.getId())) {
             id = filmRequestDto.getId();
-            filmService.findById(id).orElseThrow(() -> new ValidationException("Has no id in dto"));
+            filmService.findById(id).orElseThrow(() -> new NoSuchFilmException("No such film with id " + id));
         } else {
             throw new ValidationException("Has no id in dto");
         }

@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.controller.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -22,7 +19,7 @@ public class UserRequestDto {
 
     private String name;
 
-    @Past()
+    @PastOrPresent()
     private LocalDate birthday;
 
 

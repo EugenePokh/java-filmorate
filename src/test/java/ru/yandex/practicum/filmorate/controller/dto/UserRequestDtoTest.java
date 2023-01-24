@@ -34,7 +34,7 @@ class UserRequestDtoTest {
         userRequestDto.setEmail("email@email.ru");
         userRequestDto.setLogin("aa");
         userRequestDto.setName("ab");
-        userRequestDto.setBirthday(LocalDate.now().minusDays(1));
+        userRequestDto.setBirthday(LocalDate.now());
 
         Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(userRequestDto);
 

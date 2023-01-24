@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.controller.dto.UserRequestDto;
+import ru.yandex.practicum.filmorate.exception.NoSuchUserException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -36,7 +37,7 @@ public class UserController {
         int id;
         if (Objects.nonNull(userRequestDto.getId())) {
             id = userRequestDto.getId();
-            userService.findById(id).orElseThrow(() -> new ValidationException("Has no id in dto"));
+            userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
         } else {
             throw new ValidationException("Has no id in dto");
         }
@@ -51,4 +52,5 @@ public class UserController {
     public List<User> findAll() {
         return userService.findAll();
     }
+
 }
