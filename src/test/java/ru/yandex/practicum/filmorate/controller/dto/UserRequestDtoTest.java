@@ -42,15 +42,42 @@ class UserRequestDtoTest {
     }
 
     @Test
-    public void shouldReturnViolation() {
+    public void shouldReturnViolationEmail() {
         UserRequestDto userRequestDto = new UserRequestDto();
         userRequestDto.setEmail("");
+        userRequestDto.setLogin("aa");
+        userRequestDto.setName("ab");
+        userRequestDto.setBirthday(LocalDate.now().minusDays(1));
+        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(userRequestDto);
+
+        assertTrue(violations.size() == 1);
+        assertEquals("email", violations.stream().findFirst().get().getPropertyPath().toString());
+    }
+
+    @Test
+    public void shouldReturnViolationLogin() {
+        UserRequestDto userRequestDto = new UserRequestDto();
+        userRequestDto.setEmail("email@email.ru");
         userRequestDto.setLogin("a a");
-        userRequestDto.setName("");
+        userRequestDto.setName("ab");
+        userRequestDto.setBirthday(LocalDate.now().minusDays(1));
+        Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(userRequestDto);
+
+        assertTrue(violations.size() == 1);
+        assertEquals("login", violations.stream().findFirst().get().getPropertyPath().toString());
+    }
+
+    @Test
+    public void shouldReturnViolationBirthday() {
+        UserRequestDto userRequestDto = new UserRequestDto();
+        userRequestDto.setEmail("email@email.ru");
+        userRequestDto.setLogin("aa");
+        userRequestDto.setName("ab");
         userRequestDto.setBirthday(LocalDate.of(2030, 01, 01));
         Set<ConstraintViolation<UserRequestDto>> violations = validator.validate(userRequestDto);
 
-        assertTrue(violations.size() == 3);
+        assertTrue(violations.size() == 1);
+        assertEquals("birthday", violations.stream().findFirst().get().getPropertyPath().toString());
     }
 
 }

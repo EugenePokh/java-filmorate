@@ -9,11 +9,11 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import java.util.*;
 
 @Service
-public class FilmServiceInMemory implements FilmService {
-    private static final Logger log = LoggerFactory.getLogger(FilmServiceInMemory.class);
+public class FilmServiceImpl implements FilmService {
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Map<Integer, Film> films = new HashMap<>();
-    private static int idCounter = 0;
+    private int idCounter = 0;
 
     @Override
     public Optional<Film> findById(int id) {

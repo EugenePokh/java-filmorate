@@ -10,12 +10,7 @@ public class UserMapper {
         User user = new User();
         user.setEmail(userRequestDto.getEmail());
         user.setLogin(userRequestDto.getLogin());
-
-        if (userRequestDto.getName() == null || userRequestDto.getName().isBlank()) {
-            user.setName(userRequestDto.getLogin());
-        } else {
-            user.setName(userRequestDto.getName());
-        }
+        user.setName(userRequestDto.getName());
 
         user.setBirthday(userRequestDto.getBirthday());
 

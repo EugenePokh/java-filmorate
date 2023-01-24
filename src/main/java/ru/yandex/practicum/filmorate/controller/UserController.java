@@ -17,7 +17,7 @@ import java.util.Objects;
 @RestController
 @AllArgsConstructor
 public class UserController {
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final UserMapper userMapper;
     private final UserService userService;

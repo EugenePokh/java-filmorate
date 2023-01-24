@@ -9,11 +9,11 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import java.util.*;
 
 @Service
-public class UserServiceInMemory implements UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserServiceInMemory.class);
+public class UserServiceImpl implements UserService {
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Map<Integer, User> users = new HashMap<>();
-    private static int idCounter = 0;
+    private int idCounter = 0;
 
     @Override
     public Optional<User> findById(int id) {
@@ -23,6 +23,11 @@ public class UserServiceInMemory implements UserService {
     @Override
     public User save(User user) {
         user.setId(generateId());
+
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+
         users.put(user.getId(), user);
         log.info("User created - " + user);
         return user;
@@ -30,8 +35,13 @@ public class UserServiceInMemory implements UserService {
 
     @Override
     public User update(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+
         log.info("User updated - " + user);
         users.put(user.getId(), user);
+
 
         return users.get(user.getId());
     }

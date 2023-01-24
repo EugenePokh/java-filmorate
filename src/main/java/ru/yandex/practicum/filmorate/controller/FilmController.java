@@ -17,7 +17,7 @@ import java.util.Objects;
 @RestController
 @AllArgsConstructor
 public class FilmController {
-    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final FilmMapper filmMapper;
     private final FilmService filmService;
