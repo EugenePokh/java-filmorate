@@ -1,47 +1,61 @@
 package ru.yandex.practicum.filmorate.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.MostLikedComparator;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class FilmServiceImpl implements FilmService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int idCounter = 0;
+    private final FilmStorage filmStorage;
 
     @Override
-    public Optional<Film> findById(int id) {
-        return Optional.ofNullable(films.get(id));
+    public Optional<Film> findById(long id) {
+        return filmStorage.findById(id);
+    }
+
+    @Override
+    public void addLike(Film film, User user) {
+        film.getIdForLikes().add(user.getId());
+    }
+
+    @Override
+    public void deleteLike(Film film, User user) {
+        film.getIdForLikes().remove(user.getId());
+    }
+
+    @Override
+    public List<Film> getMostLikedFilms(Integer count) {
+        List<Film> films = filmStorage.findAll()
+                .stream()
+                .sorted(new MostLikedComparator())
+                .limit(count)
+                .collect(Collectors.toList());
+
+        return films;
     }
 
     @Override
     public Film save(Film film) {
-        film.setId(generateId());
-        films.put(film.getId(), film);
-        log.info("Film created - " + film);
-        return film;
+        return filmStorage.save(film);
     }
 
     @Override
     public Film update(Film film) {
-        log.info("Film updated - " + film);
-        films.put(film.getId(), film);
-
-        return films.get(film.getId());
+        return filmStorage.update(film);
     }
 
     @Override
     public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+        return filmStorage.findAll();
     }
 
-    private int generateId() {
-        return ++idCounter;
-    }
 }

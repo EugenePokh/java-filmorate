@@ -13,5 +13,11 @@ public interface UserService {
 
     User update(User user);
 
-    Optional<User> findById(int id);
+    Optional<User> findById(long id);
+
+    void addFriend(User user, User friend);
+
+    void deleteFriend(User user, User friend);
+
+    List<User> getMutualFriends(User user, User friend);
 }

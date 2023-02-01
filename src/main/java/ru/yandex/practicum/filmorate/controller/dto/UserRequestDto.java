@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class UserRequestDto {
-    private Integer id;
+    private Long id;
 
     @NotBlank
     @Email()

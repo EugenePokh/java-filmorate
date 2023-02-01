@@ -12,8 +12,10 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @RestController
 @AllArgsConstructor
@@ -34,7 +36,7 @@ public class UserController {
 
     @PutMapping("/users")
     public User updateUser(@Validated @RequestBody UserRequestDto userRequestDto) {
-        int id;
+        long id;
         if (Objects.nonNull(userRequestDto.getId())) {
             id = userRequestDto.getId();
             userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
@@ -53,4 +55,41 @@ public class UserController {
         return userService.findAll();
     }
 
+    @GetMapping("/users/{id}")
+    public User getById(@PathVariable Long id) {
+        return userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public void addFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        User user = userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
+        User friend = userService.findById(friendId).orElseThrow(() -> new NoSuchUserException("No such user with id " + friendId));
+        userService.addFriend(user, friend);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void deleteFriends(@PathVariable Long id, @PathVariable Long friendId) {
+        User user = userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
+        User friend = userService.findById(friendId).orElseThrow(() -> new NoSuchUserException("No such user with id " + friendId));
+        userService.deleteFriend(user, friend);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        User user = userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
+        Set<Long> ids = user.getFriends();
+        List<User> friends = new ArrayList<>();
+        for (Long idFriend : ids) {
+            User friend = userService.findById(idFriend).orElseThrow(() -> new NoSuchUserException("No such user with id " + idFriend));
+            friends.add(friend);
+        }
+        return friends;
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        User user = userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
+        User friend = userService.findById(otherId).orElseThrow(() -> new NoSuchUserException("No such user with id " + otherId));
+        return userService.getMutualFriends(user, friend);
+    }
 }
