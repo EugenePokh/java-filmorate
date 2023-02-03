@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.MostLikedComparator;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -24,12 +23,14 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void addLike(Film film, User user) {
-        film.getIdForLikes().add(user.getId());
+        film.getUserIdsForLikes().add(user.getId());
+        filmStorage.save(film);
     }
 
     @Override
     public void deleteLike(Film film, User user) {
-        film.getIdForLikes().remove(user.getId());
+        film.getUserIdsForLikes().remove(user.getId());
+        filmStorage.save(film);
     }
 
     @Override

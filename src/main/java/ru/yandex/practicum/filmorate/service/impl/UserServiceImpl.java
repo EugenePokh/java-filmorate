@@ -29,10 +29,12 @@ public class UserServiceImpl implements UserService {
         Set<Long> userFriends = user.getFriends();
         userFriends.add(friend.getId());
         log.info("Пользователю - " + user.getId() + " добавили друга - " + friend.getId());
+        userStorage.save(user);
 
         Set<Long> friendFriends = friend.getFriends();
         friendFriends.add(user.getId());
         log.info("Пользователю - " + friend.getId() + " добавили друга - " + user.getId());
+        userStorage.save(friend);
     }
 
     @Override
@@ -40,10 +42,12 @@ public class UserServiceImpl implements UserService {
         Set<Long> userFriends = user.getFriends();
         userFriends.remove(friend.getId());
         log.info("Пользователю - " + user.getId() + " удалили друга - " + friend.getId());
+        userStorage.save(user);
 
         Set<Long> friendFriends = friend.getFriends();
         friendFriends.remove(user.getId());
         log.info("Пользователю - " + friend.getId() + " удалили друга - " + user.getId());
+        userStorage.save(friend);
     }
 
     @Override
