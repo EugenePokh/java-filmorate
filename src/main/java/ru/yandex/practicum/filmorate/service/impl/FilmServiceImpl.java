@@ -24,13 +24,13 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public void addLike(Film film, User user) {
         film.getUserIdsForLikes().add(user.getId());
-        filmStorage.save(film);
+        filmStorage.update(film);
     }
 
     @Override
     public void deleteLike(Film film, User user) {
         film.getUserIdsForLikes().remove(user.getId());
-        filmStorage.save(film);
+        filmStorage.update(film);
     }
 
     @Override
