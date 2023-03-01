@@ -6,8 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.controller.dto.UserRequestDto;
-import ru.yandex.practicum.filmorate.exception.NoSuchUserException;
+import ru.yandex.practicum.filmorate.controller.dto.UserResponseDto;
+import ru.yandex.practicum.filmorate.controller.exception.NoSuchUserException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.Friend;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -26,16 +29,16 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users")
-    public User createUser(@Validated @RequestBody UserRequestDto userRequestDto) {
+    public UserResponseDto createUser(@Validated @RequestBody UserRequestDto userRequestDto) {
         log.debug("Handle endpoint POST /users dto - " + userRequestDto);
         User user = userMapper.toModel(userRequestDto);
         User created = userService.save(user);
 
-        return created;
+        return userMapper.toDto(created);
     }
 
     @PutMapping("/users")
-    public User updateUser(@Validated @RequestBody UserRequestDto userRequestDto) {
+    public UserResponseDto updateUser(@Validated @RequestBody UserRequestDto userRequestDto) {
         long id;
         if (Objects.nonNull(userRequestDto.getId())) {
             id = userRequestDto.getId();
@@ -47,17 +50,25 @@ public class UserController {
         User user = userMapper.toModel(userRequestDto);
         user.setId(id);
 
-        return userService.update(user);
+        return userMapper.toDto(userService.update(user));
     }
 
     @GetMapping("/users")
-    public List<User> findAll() {
-        return userService.findAll();
+    public List<UserResponseDto> findAll() {
+        List<User> users = userService.findAll();
+        List<UserResponseDto> dtos = new ArrayList<>();
+
+        for (User user : users) {
+            UserResponseDto dto = userMapper.toDto(user);
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 
     @GetMapping("/users/{id}")
-    public User getById(@PathVariable Long id) {
-        return userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
+    public UserResponseDto getById(@PathVariable Long id) {
+        return userMapper.toDto(userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id)));
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
@@ -75,21 +86,40 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/friends")
-    public List<User> getFriends(@PathVariable Long id) {
+    public List<UserResponseDto> getFriends(@PathVariable Long id) {
         User user = userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
-        Set<Long> ids = user.getFriends();
+        Set<Long> ids = userService.getFriendByUser(user)
+                .stream()
+                .map(Friend::getFriendId)
+                .collect(Collectors.toSet());
         List<User> friends = new ArrayList<>();
-        for (Long idFriend : ids) {
-            User friend = userService.findById(idFriend).orElseThrow(() -> new NoSuchUserException("No such user with id " + idFriend));
-            friends.add(friend);
+        for (Long friend : ids) {
+            User userFriend = userService.findById(friend).orElseThrow(() -> new NoSuchUserException("No such user with id " + friend));
+            friends.add(userFriend);
         }
-        return friends;
+        List<UserResponseDto> dtos = new ArrayList<>();
+
+        for (User friendUser : friends) {
+            UserResponseDto dto = userMapper.toDto(friendUser);
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public List<User> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
+    public List<UserResponseDto> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
         User user = userService.findById(id).orElseThrow(() -> new NoSuchUserException("No such user with id " + id));
         User friend = userService.findById(otherId).orElseThrow(() -> new NoSuchUserException("No such user with id " + otherId));
-        return userService.getMutualFriends(user, friend);
+        List<User> mutualFriends = userService.getMutualFriends(user, friend);
+
+        List<UserResponseDto> dtos = new ArrayList<>();
+
+        for (User mutualUser : mutualFriends) {
+            UserResponseDto dto = userMapper.toDto(mutualUser);
+            dtos.add(dto);
+        }
+
+        return dtos;
     }
 }

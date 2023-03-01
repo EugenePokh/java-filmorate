@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.LikeService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class FilmServiceImpl implements FilmService {
 
     private final FilmStorage filmStorage;
+    private final LikeService likeService;
 
     @Override
     public Optional<Film> findById(long id) {
@@ -23,22 +26,22 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void addLike(Film film, User user) {
-        film.getUserIdsForLikes().add(user.getId());
-        filmStorage.update(film);
+        Like like = new Like();
+        like.setUserId(user.getId());
+        like.setFilmId(film.getId());
+        likeService.save(like);
     }
 
     @Override
     public void deleteLike(Film film, User user) {
-        film.getUserIdsForLikes().remove(user.getId());
-        filmStorage.update(film);
+        likeService.deleteByUserIdAndFilmId(user.getId(), film.getId());
     }
 
     @Override
     public List<Film> getMostLikedFilms(Integer count) {
-        List<Film> films = filmStorage.findAll()
+        List<Film> films = likeService.findMostPopularFilms(count)
                 .stream()
-                .sorted(new MostLikedComparator())
-                .limit(count)
+                .map(filmId -> filmStorage.findById(filmId).get())
                 .collect(Collectors.toList());
 
         return films;
